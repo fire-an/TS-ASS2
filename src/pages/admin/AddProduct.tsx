@@ -1,21 +1,25 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { useForm, SubmitHandler } from "react-hook-form"; //import useForm hook
-import { IProduct } from "../../type/product";
-import { Button, Form, Input, InputNumber, Modal, Upload } from "antd";
+import { Button, Form, Input, Modal, Upload } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import type { RcFile, UploadProps } from "antd/es/upload";
 import type { UploadFile } from "antd/es/upload/interface";
-import { redirect } from "react-router-dom";
+import { IProduct } from "../../type/product";
+import axios from "axios";
 interface IProps {
-  onAdd: (product: IProduct) => void;
+  onAdd: (product: {
+    name: string;
+    price: number;
+    image: string;
+    description: string;
+    categoryId: string;
+  }) => any;
 }
 interface IFormInput {
   id: number;
   name: string;
   price: number;
 }
-
 const getBase64 = (file: RcFile): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -24,27 +28,41 @@ const getBase64 = (file: RcFile): Promise<string> =>
     reader.onerror = (error) => reject(error);
   });
 const AddProductPage = (props: IProps) => {
+  const [urlImg, setUrlImg] = useState<String>("");
   // const { register, handleSubmit } = useForm<IFormInput>()
   // //register là hàm dể đăng ký các trường dữ liệu trong form
   // //handleSubmit là hàm dể xử lý khi submit form
   // const onHandleSubmit: SubmitHandler<IFormInput> = (data: IProduct) => {
   //     props.onAdd(data);
   // }
-  const navigate = useNavigate();
 
-  const onFinish = (values: any) => {
-    const newProduct = {
-      id: values.id,
-      name: values.name,
-      price: values.price,
-      description: values.description,
-      categoryId: values.categoryId,
-      image: values.image.file.name,
-    };
-    props.onAdd(newProduct);
-    alert("Successfully");
-    navigate("/admin/products");
+  // upload hình ảnh lên ...
+  const CLOUD_NAME = "minhduc";
+  const PRESET_NAME = "freeImage";
+  const FOLDER_NAME = "freeImage";
+  const API_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+  const uploadImgs = async (file: RcFile | any) => {
+    if (file) {
+      const urls: string[] = [];
+      const formData = new FormData();
+      formData.append("upload_preset", PRESET_NAME);
+      formData.append("folder", FOLDER_NAME);
+      formData.append("file", file);
+      try {
+        const response = await axios.post(API_URL, formData, {
+          headers: { "Content-Type": "application/form-data" },
+        });
+        urls.push(response.data.url);
+      } catch (error) {
+        console.error("Upload image failed.");
+      }
+      return urls;
+    }
+    return [];
   };
+
+  // ___
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
@@ -70,8 +88,14 @@ const AddProductPage = (props: IProps) => {
     );
   };
 
-  const handleChange: UploadProps["onChange"] = ({ fileList: newFileList }) =>
+  const handleChange: UploadProps["onChange"] = async ({
+    fileList: newFileList,
+  }) => {
+    console.log(newFileList[0].originFileObj);
+    const imgg = await uploadImgs(newFileList[0].originFileObj);
+    setUrlImg(imgg[0]);
     setFileList(newFileList);
+  };
 
   // setFileList(newFileList);
 
@@ -81,6 +105,12 @@ const AddProductPage = (props: IProps) => {
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+  const onFinish = (values: any) => {
+    console.log(urlImg);
+    console.log("value", values);
+    values.image = String(urlImg);
+    props.onAdd(values);
+  };
   return (
     <div>
       <Form
@@ -94,45 +124,25 @@ const AddProductPage = (props: IProps) => {
         autoComplete="off"
       >
         <Form.Item
-          label="Tên sản phẩm"
+          label="Product Name"
           name="name"
-          rules={[
-            { required: true, message: "Không được để trống tên sản phẩm!" },
-          ]}
+          rules={[{ required: true, message: "Please input your username!" }]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="Giá sản phẩm"
+          label="Product Price"
           name="price"
-          rules={[
-            { required: true, message: "Không được để trống giá sản phẩm!" },
-          ]}
-        >
-          <InputNumber />
-        </Form.Item>
-
-        <Form.Item
-          label="Mô tả"
-          name="description"
-          rules={[{ required: true, message: "Cần phải có mô tả!" }]}
+          rules={[{ required: true, message: "Please input your price!" }]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="Danh mục"
-          name="categoryId"
-          rules={[{ required: true, message: "Không được để trống danh mục!" }]}
-        >
-          <InputNumber />
-        </Form.Item>
-
-        <Form.Item
-          label="Ảnh"
+          label="Product Image"
           name="image"
-          rules={[{ required: true, message: "Please input your password!" }]}
+          rules={[{ required: true, message: "Please input your images!" }]}
         >
           <Upload
             // action="http://localhost:3000/products"
@@ -147,7 +157,20 @@ const AddProductPage = (props: IProps) => {
                         <img alt="example" style={{ width: '100%' }} src={previewImage} />
                     </Modal> */}
         </Form.Item>
-
+        <Form.Item
+          label="Product Description"
+          name="description"
+          rules={[{ required: true, message: "Please input your price!" }]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Product category"
+          name="categoryId"
+          rules={[{ required: true, message: "Please input your price!" }]}
+        >
+          <Input type="number" />
+        </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button type="primary" htmlType="submit">
             Add New Product

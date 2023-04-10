@@ -31,6 +31,14 @@
       "categoryId": 1,
       "image": "Screenshot_313.png",
       "id": 4
+    },
+    {
+      "name": "AAA",
+      "price": "12345",
+      "image": "http://res.cloudinary.com/minhduc/image/upload/v1681170612/freeImage/yysj993qk9tp73rdo5ix.png",
+      "description": "abcd",
+      "categoryId": "1",
+      "id": 5
     }
   ],
   "users": [
