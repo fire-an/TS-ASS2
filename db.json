@@ -1,0 +1,76 @@
+{
+  "products": [
+    {
+      "name": "Iphone",
+      "price": 100000,
+      "description": "điện thoại",
+      "categoryId": 2,
+      "image": "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/t/_/t_m_18.png",
+      "id": 1
+    },
+    {
+      "name": "Xiaomi",
+      "price": 200000,
+      "description": "điện thoại",
+      "categoryId": 1,
+      "image": "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/x/i/xiaomi-12t-den_2.jpg",
+      "id": 2
+    },
+    {
+      "id": 3,
+      "name": "Samsung",
+      "price": 40000,
+      "description": "màn hình",
+      "image": "https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/s/a/samsung_galaxy_z_fold_4-7.jpg",
+      "categoryId": 1
+    },
+    {
+      "name": "AAA",
+      "price": 121212,
+      "description": "ddddd",
+      "categoryId": 1,
+      "image": "Screenshot_313.png",
+      "id": 4
+    }
+  ],
+  "users": [
+    {
+      "name": "thaivh",
+      "email": "thaivhph28695@gmail.com",
+      "password": "abc123",
+      "id": 1
+    },
+    {
+      "name": "vht",
+      "email": "hongthai96961996@gmail.com",
+      "password": "123456",
+      "id": 2
+    },
+    {
+      "name": "vht",
+      "email": "abc@gmail.com",
+      "password": "1234",
+      "id": 3
+    },
+    {
+      "name": "abcd",
+      "email": "yht@gmail.com",
+      "password": "12345",
+      "id": 4
+    }
+  ],
+  "categories": [
+    {
+      "name": "Tablet",
+      "id": 3
+    },
+    {
+      "name": "Screen",
+      "id": 4
+    },
+    {
+      "name": "Phone",
+      "id": 5
+    }
+  ]
+}
